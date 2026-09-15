@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import SignInPage from './pages/SignInPage';
 import HomePage from './pages/HomePage';
 import UploadPage from './pages/UploadPage';
 import DashboardPage from './pages/DashboardPage';
@@ -7,7 +8,11 @@ import { sampleBusinessPlans } from './data/sampleAudits';
 import { ThemeProvider } from './context/ThemeContext';
 
 function PlanLensApp() {
-  const [currentScreen, setCurrentScreen] = useState('home');
+  // Initially show the Sign In page as requested
+  const [currentScreen, setCurrentScreen] = useState('signin');
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
+
   const [activePlanId, setActivePlanId] = useState('campusbite');
   const [selectedPillarId, setSelectedPillarId] = useState('market-analysis');
   const [plans, setPlans] = useState(sampleBusinessPlans);
@@ -20,13 +25,27 @@ function PlanLensApp() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  // Called upon successful sign in -> directly shows the main dashboard!
+  const handleSignInSuccess = (userData) => {
+    setIsAuthenticated(true);
+    setCurrentUser(userData);
+    setCurrentScreen('dashboard');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleSignOut = () => {
+    setIsAuthenticated(false);
+    setCurrentUser(null);
+    setCurrentScreen('signin');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   const handleSelectSample = (sampleKey) => {
     setActivePlanId(sampleKey);
   };
 
   const handleStartAudit = (fileName) => {
     if (fileName && fileName !== activePlan.fileName) {
-      // Create dynamically updated active plan
       setPlans(prev => ({
         ...prev,
         [activePlanId]: {
@@ -97,29 +116,47 @@ function PlanLensApp() {
 
   return (
     <div className="min-h-screen">
+      {/* Initial Sign In Page */}
+      {currentScreen === 'signin' && (
+        <SignInPage 
+          onSignInSuccess={handleSignInSuccess}
+          onNavigateToHome={() => handleNavigate('home')}
+        />
+      )}
+
+      {/* Landing Page */}
       {currentScreen === 'home' && (
         <HomePage 
           onNavigate={handleNavigate}
           onSelectSample={handleSelectSample}
+          isAuthenticated={isAuthenticated}
+          onSignOut={handleSignOut}
         />
       )}
 
+      {/* Upload & Analyze Studio */}
       {currentScreen === 'upload' && (
         <UploadPage 
           onNavigate={handleNavigate}
           onStartAudit={handleStartAudit}
           activePlan={activePlan}
+          currentUser={currentUser}
+          onSignOut={handleSignOut}
         />
       )}
 
+      {/* Main Analysis Dashboard */}
       {currentScreen === 'dashboard' && (
         <DashboardPage 
           plan={activePlan}
           onNavigate={handleNavigate}
           onSelectPillar={handleSelectPillar}
+          currentUser={currentUser}
+          onSignOut={handleSignOut}
         />
       )}
 
+      {/* Detailed Section Review */}
       {currentScreen === 'section-review' && (
         <SectionReviewPage 
           pillar={activePillar}
@@ -128,6 +165,8 @@ function PlanLensApp() {
           onSelectPillar={handleSelectPillar}
           onToggleRemediation={handleToggleRemediation}
           onMarkReviewed={handleMarkReviewed}
+          currentUser={currentUser}
+          onSignOut={handleSignOut}
         />
       )}
     </div>

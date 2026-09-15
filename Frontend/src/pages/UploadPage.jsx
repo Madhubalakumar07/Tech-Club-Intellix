@@ -13,7 +13,7 @@ import Sidebar from '../components/Sidebar';
 import AppHeader from '../components/AppHeader';
 import { useTheme } from '../context/ThemeContext';
 
-export default function UploadPage({ onNavigate, onStartAudit, activePlan }) {
+export default function UploadPage({ onNavigate, onStartAudit, activePlan, currentUser, onSignOut }) {
   const { isDark } = useTheme();
   const [file, setFile] = useState({
     name: "BusinessPlan.pdf",
@@ -115,6 +115,8 @@ export default function UploadPage({ onNavigate, onStartAudit, activePlan }) {
         <AppHeader 
           activePlan={activePlan} 
           onNavigate={onNavigate}
+          currentUser={currentUser}
+          onSignOut={onSignOut}
         />
 
         <main className="flex-1 px-6 py-10 max-w-4xl mx-auto w-full flex flex-col items-center justify-center">

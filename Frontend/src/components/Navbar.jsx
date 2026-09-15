@@ -1,9 +1,9 @@
 import React from 'react';
-import { ArrowRight, Sparkles, ShieldCheck, Layers, HelpCircle, FileText } from 'lucide-react';
+import { ArrowRight, LogIn, UserCheck } from 'lucide-react';
 import ThemeToggle from './ThemeToggle';
 import { useTheme } from '../context/ThemeContext';
 
-export default function Navbar({ onNavigate, currentScreen }) {
+export default function Navbar({ onNavigate, currentScreen, isAuthenticated, onSignOut }) {
   const { isDark } = useTheme();
 
   return (
@@ -67,12 +67,26 @@ export default function Navbar({ onNavigate, currentScreen }) {
           >
             Sample Audits
           </button>
-          <button 
-            onClick={() => onNavigate('upload')}
-            className={`transition-colors ${isDark ? 'text-slate-400 hover:text-white' : 'text-slate-500 hover:text-slate-900'}`}
-          >
-            Sign In
-          </button>
+          {isAuthenticated ? (
+            <button 
+              onClick={onSignOut}
+              className={`transition-colors text-rose-500 hover:text-rose-400 font-semibold`}
+            >
+              Sign Out
+            </button>
+          ) : (
+            <button 
+              onClick={() => onNavigate('signin')}
+              className={`transition-colors flex items-center gap-1.5 ${
+                currentScreen === 'signin'
+                  ? isDark ? 'text-white font-semibold' : 'text-indigo-600 font-semibold'
+                  : isDark ? 'text-slate-400 hover:text-white' : 'text-slate-500 hover:text-slate-900'
+              }`}
+            >
+              <LogIn className="w-3.5 h-3.5" />
+              <span>Sign In</span>
+            </button>
+          )}
         </div>
 
         {/* Right CTA & Theme Toggle */}

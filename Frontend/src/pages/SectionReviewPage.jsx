@@ -21,7 +21,9 @@ export default function SectionReviewPage({
   onNavigate, 
   onSelectPillar,
   onToggleRemediation,
-  onMarkReviewed
+  onMarkReviewed,
+  currentUser,
+  onSignOut
 }) {
   const { isDark } = useTheme();
   const [isReviewed, setIsReviewed] = useState(false);
@@ -53,6 +55,8 @@ export default function SectionReviewPage({
         <AppHeader 
           activePlan={plan} 
           onNavigate={onNavigate}
+          currentUser={currentUser}
+          onSignOut={onSignOut}
         />
 
         <main className="flex-1 px-8 py-8 max-w-7xl mx-auto w-full">

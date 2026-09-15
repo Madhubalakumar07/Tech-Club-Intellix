@@ -7,7 +7,7 @@ import {
   TrendingDown, 
   Target, 
   Megaphone, 
-  Check,
+  Check, 
   Download
 } from 'lucide-react';
 import Sidebar from '../components/Sidebar';
@@ -17,7 +17,9 @@ import { useTheme } from '../context/ThemeContext';
 export default function DashboardPage({ 
   plan, 
   onNavigate, 
-  onSelectPillar 
+  onSelectPillar,
+  currentUser,
+  onSignOut
 }) {
   const { isDark } = useTheme();
 
@@ -54,6 +56,8 @@ export default function DashboardPage({
         <AppHeader 
           activePlan={plan} 
           onNavigate={onNavigate}
+          currentUser={currentUser}
+          onSignOut={onSignOut}
           rightAction={
             <button
               onClick={() => onNavigate('upload')}
