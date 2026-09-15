@@ -4,8 +4,9 @@ import UploadPage from './pages/UploadPage';
 import DashboardPage from './pages/DashboardPage';
 import SectionReviewPage from './pages/SectionReviewPage';
 import { sampleBusinessPlans } from './data/sampleAudits';
+import { ThemeProvider } from './context/ThemeContext';
 
-export default function App() {
+function PlanLensApp() {
   const [currentScreen, setCurrentScreen] = useState('home');
   const [activePlanId, setActivePlanId] = useState('campusbite');
   const [selectedPillarId, setSelectedPillarId] = useState('market-analysis');
@@ -95,7 +96,7 @@ export default function App() {
   };
 
   return (
-    <div className="bg-[#0b0d14] text-slate-100 min-h-screen">
+    <div className="min-h-screen">
       {currentScreen === 'home' && (
         <HomePage 
           onNavigate={handleNavigate}
@@ -130,5 +131,13 @@ export default function App() {
         />
       )}
     </div>
+  );
+}
+
+export default function App() {
+  return (
+    <ThemeProvider>
+      <PlanLensApp />
+    </ThemeProvider>
   );
 }

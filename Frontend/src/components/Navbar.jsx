@@ -1,9 +1,17 @@
 import React from 'react';
 import { ArrowRight, Sparkles, ShieldCheck, Layers, HelpCircle, FileText } from 'lucide-react';
+import ThemeToggle from './ThemeToggle';
+import { useTheme } from '../context/ThemeContext';
 
 export default function Navbar({ onNavigate, currentScreen }) {
+  const { isDark } = useTheme();
+
   return (
-    <nav className="w-full bg-[#0b0d14]/80 backdrop-blur-xl border-b border-white/[0.06] sticky top-0 z-50">
+    <nav className={`w-full backdrop-blur-xl border-b sticky top-0 z-50 transition-colors duration-300 ${
+      isDark 
+        ? 'bg-[#0b0d14]/85 border-white/[0.06]' 
+        : 'bg-white/85 border-slate-200 shadow-sm'
+    }`}>
       <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
         {/* Logo */}
         <div 
@@ -18,44 +26,63 @@ export default function Navbar({ onNavigate, currentScreen }) {
               <polyline points="2 12 12 17 22 12" />
             </svg>
           </div>
-          <span className="text-lg font-bold tracking-tight text-white flex items-center gap-1">
-            PlanLens <span className="text-indigo-400 font-extrabold">AI</span>
+          <span className={`text-lg font-bold tracking-tight flex items-center gap-1 ${
+            isDark ? 'text-white' : 'text-slate-900'
+          }`}>
+            PlanLens <span className="text-indigo-500 font-extrabold">AI</span>
           </span>
         </div>
 
         {/* Center Nav Links */}
-        <div className="hidden md:flex items-center gap-8 text-sm font-medium text-slate-300">
+        <div className={`hidden md:flex items-center gap-8 text-sm font-medium ${
+          isDark ? 'text-slate-300' : 'text-slate-600'
+        }`}>
           <button 
             onClick={() => onNavigate('home')}
-            className={`hover:text-white transition-colors ${currentScreen === 'home' ? 'text-white' : ''}`}
+            className={`transition-colors ${
+              currentScreen === 'home' 
+                ? isDark ? 'text-white font-semibold' : 'text-indigo-600 font-semibold'
+                : isDark ? 'hover:text-white' : 'hover:text-slate-900'
+            }`}
           >
             How It Works
           </button>
           <button 
             onClick={() => onNavigate('upload')}
-            className={`hover:text-white transition-colors ${currentScreen === 'upload' ? 'text-white' : ''}`}
+            className={`transition-colors ${
+              currentScreen === 'upload' 
+                ? isDark ? 'text-white font-semibold' : 'text-indigo-600 font-semibold'
+                : isDark ? 'hover:text-white' : 'hover:text-slate-900'
+            }`}
           >
             Frameworks
           </button>
           <button 
             onClick={() => onNavigate('dashboard')}
-            className={`hover:text-white transition-colors ${currentScreen === 'dashboard' ? 'text-white' : ''}`}
+            className={`transition-colors ${
+              currentScreen === 'dashboard' 
+                ? isDark ? 'text-white font-semibold' : 'text-indigo-600 font-semibold'
+                : isDark ? 'hover:text-white' : 'hover:text-slate-900'
+            }`}
           >
             Sample Audits
           </button>
           <button 
             onClick={() => onNavigate('upload')}
-            className="hover:text-white transition-colors text-slate-400"
+            className={`transition-colors ${isDark ? 'text-slate-400 hover:text-white' : 'text-slate-500 hover:text-slate-900'}`}
           >
             Sign In
           </button>
         </div>
 
-        {/* Right CTA Button */}
+        {/* Right CTA & Theme Toggle */}
         <div className="flex items-center gap-3">
+          {/* Theme Toggle Button */}
+          <ThemeToggle />
+
           <button
             onClick={() => onNavigate('upload')}
-            className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700 rounded-lg shadow-glow transition-all flex items-center gap-2 group border border-indigo-400/30"
+            className="px-4 py-2 text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700 rounded-xl shadow-glow transition-all flex items-center gap-2 group border border-indigo-400/30"
           >
             <span>Analyze My Business Plan</span>
             <ArrowRight className="w-4 h-4 transform group-hover:translate-x-0.5 transition-transform" />

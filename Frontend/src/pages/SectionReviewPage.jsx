@@ -9,16 +9,11 @@ import {
   Square, 
   Sparkles, 
   Info, 
-  ChevronRight, 
-  Award,
-  HelpCircle,
-  TrendingUp,
-  Check,
-  XCircle,
-  AlertCircle
+  Check
 } from 'lucide-react';
 import Sidebar from '../components/Sidebar';
 import AppHeader from '../components/AppHeader';
+import { useTheme } from '../context/ThemeContext';
 
 export default function SectionReviewPage({ 
   pillar, 
@@ -28,6 +23,7 @@ export default function SectionReviewPage({
   onToggleRemediation,
   onMarkReviewed
 }) {
+  const { isDark } = useTheme();
   const [isReviewed, setIsReviewed] = useState(false);
 
   if (!pillar) return null;
@@ -46,7 +42,9 @@ export default function SectionReviewPage({
   };
 
   return (
-    <div className="min-h-screen bg-[#0b0d14] flex text-slate-100 selection:bg-indigo-500 selection:text-white">
+    <div className={`min-h-screen flex selection:bg-indigo-500 selection:text-white transition-colors duration-300 ${
+      isDark ? 'bg-[#0b0d14] text-slate-100' : 'bg-[#f8fafc] text-slate-900'
+    }`}>
       {/* Sidebar */}
       <Sidebar currentScreen="section-review" onNavigate={onNavigate} activePlan={plan} />
 
@@ -62,43 +60,55 @@ export default function SectionReviewPage({
           {/* Top Breadcrumb & Return Link */}
           <button
             onClick={() => onNavigate('dashboard')}
-            className="inline-flex items-center gap-1.5 text-xs text-indigo-400 hover:text-indigo-300 font-medium transition-colors mb-4 group"
+            className="inline-flex items-center gap-1.5 text-xs text-indigo-500 hover:text-indigo-600 font-semibold transition-colors mb-4 group"
           >
             <ArrowLeft className="w-3.5 h-3.5 transform group-hover:-translate-x-0.5 transition-transform" />
             <span>Back to Review Dashboard</span>
           </button>
 
           {/* Section Header Bar */}
-          <div className="flex flex-wrap items-center justify-between gap-4 pb-6 border-b border-white/[0.06]">
+          <div className={`flex flex-wrap items-center justify-between gap-4 pb-6 border-b ${
+            isDark ? 'border-white/[0.06]' : 'border-slate-200'
+          }`}>
             <div className="flex items-center gap-3">
-              <h1 className="text-3xl font-extrabold text-white tracking-tight">
+              <h1 className={`text-3xl font-extrabold tracking-tight ${
+                isDark ? 'text-white' : 'text-slate-900'
+              }`}>
                 {pillar.title}
               </h1>
-              <span className="px-2.5 py-1 rounded-md bg-slate-800 border border-white/[0.08] text-slate-300 text-xs font-mono font-medium">
+              <span className={`px-2.5 py-1 rounded-md border text-xs font-mono font-medium ${
+                isDark ? 'bg-slate-800 border-white/[0.08] text-slate-300' : 'bg-slate-100 border-slate-200 text-slate-700'
+              }`}>
                 Section {pillar.number}
               </span>
             </div>
 
             {/* Score & Verdict Badges */}
-            <div className="flex items-center gap-3 bg-[#141828] border border-white/[0.08] rounded-xl px-4 py-2">
+            <div className={`flex items-center gap-3 border rounded-xl px-4 py-2 ${
+              isDark ? 'bg-[#141828] border-white/[0.08]' : 'bg-white border-slate-200 shadow-sm'
+            }`}>
               <div>
-                <span className="text-[10px] font-mono uppercase tracking-wider text-slate-400 block">
+                <span className={`text-[10px] font-mono uppercase tracking-wider block ${
+                  isDark ? 'text-slate-400' : 'text-slate-500'
+                }`}>
                   SECTION SCORE
                 </span>
-                <span className="text-lg font-bold text-white leading-tight">
-                  {pillar.score} <span className="text-xs text-slate-400 font-normal">/ 100</span>
+                <span className={`text-lg font-bold leading-tight ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                  {pillar.score} <span className={`text-xs font-normal ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>/ 100</span>
                 </span>
               </div>
-              <div className="h-7 w-px bg-white/[0.08]" />
+              <div className={`h-7 w-px ${isDark ? 'bg-white/[0.08]' : 'bg-slate-200'}`} />
               <div>
-                <span className="text-[10px] font-mono uppercase tracking-wider text-slate-400 block">
+                <span className={`text-[10px] font-mono uppercase tracking-wider block ${
+                  isDark ? 'text-slate-400' : 'text-slate-500'
+                }`}>
                   AUDIT VERDICT
                 </span>
                 <span className={`inline-flex items-center gap-1.5 text-xs font-semibold ${
-                  pillar.score >= 80 ? 'text-emerald-400' : pillar.score >= 65 ? 'text-blue-400' : pillar.score >= 50 ? 'text-amber-400' : 'text-rose-400'
+                  pillar.score >= 80 ? 'text-emerald-500' : pillar.score >= 65 ? 'text-blue-500' : pillar.score >= 50 ? 'text-amber-500' : 'text-rose-500'
                 }`}>
                   <span className={`w-1.5 h-1.5 rounded-full ${
-                    pillar.score >= 80 ? 'bg-emerald-400' : pillar.score >= 65 ? 'bg-blue-400' : pillar.score >= 50 ? 'bg-amber-400' : 'bg-rose-400'
+                    pillar.score >= 80 ? 'bg-emerald-500' : pillar.score >= 65 ? 'bg-blue-500' : pillar.score >= 50 ? 'bg-amber-500' : 'bg-rose-500'
                   }`} />
                   {pillar.status === 'Needs Imp.' ? 'Needs Improvement' : pillar.status}
                 </span>
@@ -107,15 +117,21 @@ export default function SectionReviewPage({
           </div>
 
           {/* Executive Section Summary Box */}
-          <div className="mt-6 bg-[#11172a] border border-cyan-500/20 rounded-xl p-4 md:p-5 flex items-start gap-3.5 shadow-sm">
-            <div className="w-6 h-6 rounded-full bg-cyan-500/15 border border-cyan-500/30 flex items-center justify-center text-cyan-400 shrink-0 mt-0.5">
+          <div className={`mt-6 border rounded-xl p-4 md:p-5 flex items-start gap-3.5 shadow-sm transition-colors ${
+            isDark 
+              ? 'bg-[#11172a] border-cyan-500/20' 
+              : 'bg-cyan-50/70 border-cyan-200'
+          }`}>
+            <div className="w-6 h-6 rounded-full bg-cyan-500/15 border border-cyan-500/30 flex items-center justify-center text-cyan-500 shrink-0 mt-0.5">
               <Info className="w-3.5 h-3.5" />
             </div>
             <div>
-              <div className="text-[10px] font-mono font-bold tracking-wider uppercase text-cyan-300">
+              <div className="text-[10px] font-mono font-bold tracking-wider uppercase text-cyan-600 dark:text-cyan-300">
                 EXECUTIVE SECTION SUMMARY
               </div>
-              <p className="mt-1 text-sm text-slate-200 leading-relaxed">
+              <p className={`mt-1 text-sm leading-relaxed ${
+                isDark ? 'text-slate-200' : 'text-slate-800'
+              }`}>
                 {pillar.executiveSectionSummary}
               </p>
             </div>
@@ -128,23 +144,29 @@ export default function SectionReviewPage({
             <div className="lg:col-span-5 space-y-6">
               
               {/* Card 1: Identified Strengths */}
-              <div className="bg-[#121524] border border-white/[0.08] rounded-2xl p-6 shadow-card-glass">
-                <div className="flex items-center justify-between pb-4 border-b border-white/[0.06]">
+              <div className={`border rounded-2xl p-6 transition-colors duration-300 ${
+                isDark ? 'bg-[#121524] border-white/[0.08] shadow-card-glass' : 'bg-white border-slate-200 shadow-md'
+              }`}>
+                <div className={`flex items-center justify-between pb-4 border-b ${
+                  isDark ? 'border-white/[0.06]' : 'border-slate-100'
+                }`}>
                   <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                    <h2 className="text-sm font-bold text-white">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                    <h2 className={`text-sm font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>
                       Identified Strengths
                     </h2>
                   </div>
-                  <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-xs font-mono font-semibold">
+                  <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 text-xs font-mono font-semibold">
                     {pillar.strengths.length} Verified
                   </span>
                 </div>
 
                 <div className="mt-4 space-y-3">
                   {pillar.strengths.map((str, idx) => (
-                    <div key={idx} className="flex items-start gap-2.5 text-xs text-slate-200">
-                      <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0 mt-0.5" />
+                    <div key={idx} className={`flex items-start gap-2.5 text-xs ${
+                      isDark ? 'text-slate-200' : 'text-slate-700'
+                    }`}>
+                      <Check className="w-3.5 h-3.5 text-emerald-500 shrink-0 mt-0.5" />
                       <span className="leading-relaxed">{str}</span>
                     </div>
                   ))}
@@ -152,15 +174,19 @@ export default function SectionReviewPage({
               </div>
 
               {/* Card 2: Critical Weaknesses */}
-              <div className="bg-[#121524] border border-white/[0.08] rounded-2xl p-6 shadow-card-glass">
-                <div className="flex items-center justify-between pb-4 border-b border-white/[0.06]">
+              <div className={`border rounded-2xl p-6 transition-colors duration-300 ${
+                isDark ? 'bg-[#121524] border-white/[0.08] shadow-card-glass' : 'bg-white border-slate-200 shadow-md'
+              }`}>
+                <div className={`flex items-center justify-between pb-4 border-b ${
+                  isDark ? 'border-white/[0.06]' : 'border-slate-100'
+                }`}>
                   <div className="flex items-center gap-2">
-                    <AlertTriangle className="w-4 h-4 text-rose-400" />
-                    <h2 className="text-sm font-bold text-white">
+                    <AlertTriangle className="w-4 h-4 text-rose-500" />
+                    <h2 className={`text-sm font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>
                       Critical Weaknesses
                     </h2>
                   </div>
-                  <span className="px-2.5 py-0.5 rounded-full bg-rose-500/15 border border-rose-500/30 text-rose-400 text-xs font-mono font-semibold">
+                  <span className="px-2.5 py-0.5 rounded-full bg-rose-500/15 border border-rose-500/30 text-rose-600 dark:text-rose-400 text-xs font-mono font-semibold">
                     {pillar.weaknesses.length} Detected
                   </span>
                 </div>
@@ -168,8 +194,8 @@ export default function SectionReviewPage({
                 <div className="mt-4 space-y-4">
                   {pillar.weaknesses.map((wk, idx) => (
                     <div key={idx} className="flex items-start gap-2.5 text-xs">
-                      <span className="w-2 h-2 rounded-full bg-rose-400 shrink-0 mt-1.5" />
-                      <div className="text-slate-300 leading-relaxed">
+                      <span className="w-2 h-2 rounded-full bg-rose-500 shrink-0 mt-1.5" />
+                      <div className={`leading-relaxed ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>
                         {wk}
                       </div>
                     </div>
@@ -179,12 +205,16 @@ export default function SectionReviewPage({
 
               {/* Card 3: Criteria Checklist (if available) */}
               {pillar.criteriaChecklist && (
-                <div className="bg-[#121524] border border-white/[0.08] rounded-2xl p-6 shadow-card-glass">
-                  <div className="flex items-center justify-between pb-4 border-b border-white/[0.06]">
-                    <h2 className="text-sm font-bold text-white">
+                <div className={`border rounded-2xl p-6 transition-colors duration-300 ${
+                  isDark ? 'bg-[#121524] border-white/[0.08] shadow-card-glass' : 'bg-white border-slate-200 shadow-md'
+                }`}>
+                  <div className={`flex items-center justify-between pb-4 border-b ${
+                    isDark ? 'border-white/[0.06]' : 'border-slate-100'
+                  }`}>
+                    <h2 className={`text-sm font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>
                       Criteria Checklist
                     </h2>
-                    <span className="text-xs font-mono text-slate-400">
+                    <span className={`text-xs font-mono ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
                       Venture Benchmark
                     </span>
                   </div>
@@ -192,17 +222,17 @@ export default function SectionReviewPage({
                   <div className="mt-4 space-y-2.5">
                     {pillar.criteriaChecklist.map((item, idx) => (
                       <div key={idx} className="flex items-center justify-between text-xs py-1">
-                        <span className="text-slate-300">{item.name}</span>
+                        <span className={isDark ? "text-slate-300" : "text-slate-700"}>{item.name}</span>
                         {item.status === 'passed' ? (
-                          <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+                          <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30">
                             Passed
                           </span>
                         ) : item.status === 'warning' ? (
-                          <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-amber-500/15 text-amber-400 border border-amber-500/30">
+                          <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30">
                             Warning
                           </span>
                         ) : (
-                          <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-rose-500/15 text-rose-400 border border-rose-500/30">
+                          <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-rose-500/15 text-rose-600 dark:text-rose-400 border border-rose-500/30">
                             Missing
                           </span>
                         )}
@@ -218,37 +248,49 @@ export default function SectionReviewPage({
             <div className="lg:col-span-7 space-y-6">
               
               {/* Card 1: Evidence from Your Business Plan */}
-              <div className="bg-[#121524] border border-white/[0.08] rounded-2xl p-6 shadow-card-glass">
-                <div className="flex items-center justify-between pb-4 border-b border-white/[0.06]">
+              <div className={`border rounded-2xl p-6 transition-colors duration-300 ${
+                isDark ? 'bg-[#121524] border-white/[0.08] shadow-card-glass' : 'bg-white border-slate-200 shadow-md'
+              }`}>
+                <div className={`flex items-center justify-between pb-4 border-b ${
+                  isDark ? 'border-white/[0.06]' : 'border-slate-100'
+                }`}>
                   <div className="flex items-center gap-2">
-                    <FileText className="w-4 h-4 text-indigo-400" />
-                    <h2 className="text-sm font-bold text-white">
+                    <FileText className="w-4 h-4 text-indigo-500" />
+                    <h2 className={`text-sm font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>
                       Evidence from Your Business Plan
                     </h2>
                   </div>
-                  <span className="px-2.5 py-0.5 rounded-md bg-slate-800 border border-white/[0.08] text-slate-400 text-xs font-mono font-medium">
+                  <span className={`px-2.5 py-0.5 rounded-md border text-xs font-mono font-medium ${
+                    isDark ? 'bg-slate-800 border-white/[0.08] text-slate-400' : 'bg-slate-100 border-slate-200 text-slate-600'
+                  }`}>
                     Document Segment
                   </span>
                 </div>
 
                 {/* Verbatim Excerpt Quote Box */}
-                <div className="mt-4 p-5 rounded-xl bg-[#0e111d] border border-white/[0.06] relative">
-                  <div className="text-3xl text-slate-600 font-serif leading-none absolute top-3 left-3 select-none">“</div>
-                  <p className="text-sm text-cyan-200/90 italic pl-5 leading-relaxed">
+                <div className={`mt-4 p-5 rounded-xl border relative ${
+                  isDark ? 'bg-[#0e111d] border-white/[0.06]' : 'bg-slate-50 border-slate-200'
+                }`}>
+                  <div className="text-3xl text-slate-400/40 font-serif leading-none absolute top-3 left-3 select-none">“</div>
+                  <p className={`text-sm italic pl-5 leading-relaxed ${
+                    isDark ? 'text-cyan-200/90' : 'text-cyan-900'
+                  }`}>
                     "{pillar.evidenceQuote}"
                   </p>
                 </div>
 
                 {/* Source Annotation Footer */}
                 <div className="mt-4 pt-2 flex items-center justify-between text-xs">
-                  <div className="flex items-center gap-2 text-slate-400 font-mono">
-                    <FileText className="w-3.5 h-3.5 text-slate-500" />
+                  <div className={`flex items-center gap-2 font-mono ${
+                    isDark ? 'text-slate-400' : 'text-slate-500'
+                  }`}>
+                    <FileText className="w-3.5 h-3.5 text-slate-400" />
                     <span>Source: {pillar.evidenceSource}</span>
                   </div>
                   <span className={`px-2.5 py-0.5 rounded text-[11px] font-mono font-bold ${
                     pillar.evidenceBadge === 'Unverified Claim' || pillar.evidenceBadge === 'High Risk Assumption' || pillar.evidenceBadge === 'Unrealistic Benchmark'
-                      ? 'bg-rose-500/15 text-rose-400 border border-rose-500/30'
-                      : 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30'
+                      ? 'bg-rose-500/15 text-rose-600 dark:text-rose-400 border border-rose-500/30'
+                      : 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30'
                   }`}>
                     {pillar.evidenceBadge}
                   </span>
@@ -257,24 +299,30 @@ export default function SectionReviewPage({
 
               {/* Card 2: Knowledge Base Guidance */}
               {pillar.knowledgeBase && (
-                <div className="bg-[#121524] border border-white/[0.08] rounded-2xl p-6 shadow-card-glass">
-                  <div className="flex items-center justify-between pb-4 border-b border-white/[0.06]">
+                <div className={`border rounded-2xl p-6 transition-colors duration-300 ${
+                  isDark ? 'bg-[#121524] border-white/[0.08] shadow-card-glass' : 'bg-white border-slate-200 shadow-md'
+                }`}>
+                  <div className={`flex items-center justify-between pb-4 border-b ${
+                    isDark ? 'border-white/[0.06]' : 'border-slate-100'
+                  }`}>
                     <div className="flex items-center gap-2">
-                      <BookOpen className="w-4 h-4 text-cyan-400" />
-                      <h2 className="text-sm font-bold text-white">
+                      <BookOpen className="w-4 h-4 text-cyan-500" />
+                      <h2 className={`text-sm font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>
                         Knowledge Base Guidance
                       </h2>
                     </div>
-                    <span className="px-2.5 py-0.5 rounded-md bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-xs font-mono font-medium">
+                    <span className="px-2.5 py-0.5 rounded-md bg-cyan-500/10 border border-cyan-500/20 text-cyan-600 dark:text-cyan-400 text-xs font-mono font-medium">
                       Methodology
                     </span>
                   </div>
 
                   <div className="mt-4">
-                    <div className="text-xs font-mono font-bold text-indigo-300">
+                    <div className="text-xs font-mono font-bold text-indigo-500 dark:text-indigo-300">
                       Framework: {pillar.knowledgeBase.framework}
                     </div>
-                    <p className="text-xs text-slate-300 mt-1 leading-relaxed">
+                    <p className={`text-xs mt-1 leading-relaxed ${
+                      isDark ? 'text-slate-300' : 'text-slate-600'
+                    }`}>
                       {pillar.knowledgeBase.description}
                     </p>
                   </div>
@@ -282,19 +330,25 @@ export default function SectionReviewPage({
                   {/* Framework Points (e.g. TAM / SAM / SOM) */}
                   <div className="mt-5 grid grid-cols-1 md:grid-cols-3 gap-3">
                     {pillar.knowledgeBase.points.map((pt, idx) => (
-                      <div key={idx} className="p-3.5 rounded-xl bg-[#171b2e] border border-white/[0.06]">
+                      <div key={idx} className={`p-3.5 rounded-xl border ${
+                        isDark ? 'bg-[#171b2e] border-white/[0.06]' : 'bg-slate-50 border-slate-200'
+                      }`}>
                         <div className="flex items-center gap-1.5">
-                          <span className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
-                          <span className="text-xs font-bold text-white font-mono">
+                          <span className="w-1.5 h-1.5 rounded-full bg-cyan-500" />
+                          <span className={`text-xs font-bold font-mono ${
+                            isDark ? 'text-white' : 'text-slate-900'
+                          }`}>
                             {pt.label}
                           </span>
                         </div>
                         {pt.subtitle && (
-                          <div className="text-[10px] text-cyan-400 font-mono mt-0.5">
+                          <div className="text-[10px] text-cyan-600 dark:text-cyan-400 font-mono mt-0.5">
                             {pt.subtitle}
                           </div>
                         )}
-                        <p className="text-[11px] text-slate-300 mt-2 leading-relaxed">
+                        <p className={`text-[11px] mt-2 leading-relaxed ${
+                          isDark ? 'text-slate-300' : 'text-slate-600'
+                        }`}>
                           {pt.text}
                         </p>
                       </div>
@@ -304,15 +358,19 @@ export default function SectionReviewPage({
               )}
 
               {/* Card 3: Recommended Improvement & "WHAT TO FIX" */}
-              <div className="bg-[#121524] border border-white/[0.08] rounded-2xl p-6 shadow-card-glass">
-                <div className="flex items-center justify-between pb-4 border-b border-white/[0.06]">
+              <div className={`border rounded-2xl p-6 transition-colors duration-300 ${
+                isDark ? 'bg-[#121524] border-white/[0.08] shadow-card-glass' : 'bg-white border-slate-200 shadow-md'
+              }`}>
+                <div className={`flex items-center justify-between pb-4 border-b ${
+                  isDark ? 'border-white/[0.06]' : 'border-slate-100'
+                }`}>
                   <div className="flex items-center gap-2">
-                    <Sparkles className="w-4 h-4 text-indigo-400" />
-                    <h2 className="text-sm font-bold text-white">
+                    <Sparkles className="w-4 h-4 text-indigo-500" />
+                    <h2 className={`text-sm font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>
                       Recommended Improvement & Action Plan
                     </h2>
                   </div>
-                  <span className="text-xs font-mono text-indigo-400 font-semibold">
+                  <span className="text-xs font-mono text-indigo-500 font-semibold">
                     WHAT TO FIX
                   </span>
                 </div>
@@ -324,18 +382,26 @@ export default function SectionReviewPage({
                       onClick={() => handleToggleCheck(rem.id)}
                       className={`p-3 rounded-xl border cursor-pointer transition-all flex items-start gap-3 ${
                         rem.done 
-                          ? 'bg-emerald-500/10 border-emerald-500/30 text-slate-300' 
-                          : 'bg-[#171b2d] border-white/[0.06] hover:border-indigo-500/40 text-white'
+                          ? isDark
+                            ? 'bg-emerald-500/10 border-emerald-500/30 text-slate-300' 
+                            : 'bg-emerald-50 border-emerald-200 text-slate-700'
+                          : isDark
+                            ? 'bg-[#171b2d] border-white/[0.06] hover:border-indigo-500/40 text-white'
+                            : 'bg-slate-50 border-slate-200 hover:border-indigo-300 text-slate-800'
                       }`}
                     >
                       <button className="mt-0.5 shrink-0">
                         {rem.done ? (
-                          <CheckSquare className="w-4 h-4 text-emerald-400" />
+                          <CheckSquare className="w-4 h-4 text-emerald-500" />
                         ) : (
-                          <Square className="w-4 h-4 text-slate-500 hover:text-indigo-400" />
+                          <Square className={`w-4 h-4 ${isDark ? 'text-slate-500 hover:text-indigo-400' : 'text-slate-400 hover:text-indigo-600'}`} />
                         )}
                       </button>
-                      <span className={`text-xs leading-relaxed ${rem.done ? 'line-through text-slate-400' : 'text-slate-200'}`}>
+                      <span className={`text-xs leading-relaxed ${
+                        rem.done 
+                          ? 'line-through opacity-70' 
+                          : isDark ? 'text-slate-200' : 'text-slate-800'
+                      }`}>
                         {rem.text}
                       </span>
                     </div>
@@ -343,14 +409,16 @@ export default function SectionReviewPage({
                 </div>
 
                 {/* Bottom Action Buttons */}
-                <div className="mt-6 pt-4 border-t border-white/[0.06] flex items-center justify-between">
-                  <span className="text-xs text-slate-400">
+                <div className={`mt-6 pt-4 border-t flex items-center justify-between ${
+                  isDark ? 'border-white/[0.06]' : 'border-slate-100'
+                }`}>
+                  <span className={`text-xs ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
                     Fixing items updates the aggregate investor readiness score.
                   </span>
 
                   <button
                     onClick={handleMarkReview}
-                    className={`px-4 py-2 rounded-lg text-xs font-semibold transition-all flex items-center gap-2 ${
+                    className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all flex items-center gap-2 ${
                       isReviewed 
                         ? 'bg-emerald-600 text-white shadow-glow-emerald border border-emerald-400/40' 
                         : 'bg-indigo-600 hover:bg-indigo-500 text-white shadow-glow border border-indigo-400/40'
@@ -367,8 +435,10 @@ export default function SectionReviewPage({
           </div>
 
           {/* Quick Pillar Switcher Carousel at Bottom */}
-          <div className="mt-12 pt-8 border-t border-white/[0.06]">
-            <div className="text-xs font-mono uppercase tracking-wider text-slate-400 mb-4">
+          <div className={`mt-12 pt-8 border-t ${isDark ? 'border-white/[0.06]' : 'border-slate-200'}`}>
+            <div className={`text-xs font-mono uppercase tracking-wider mb-4 ${
+              isDark ? 'text-slate-400' : 'text-slate-500'
+            }`}>
               Explore other audited pillars:
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2.5">
@@ -376,16 +446,22 @@ export default function SectionReviewPage({
                 <button
                   key={p.id}
                   onClick={() => onSelectPillar(p.id)}
-                  className={`p-2.5 rounded-lg border text-left transition-all ${
+                  className={`p-2.5 rounded-xl border text-left transition-all ${
                     p.id === pillar.id 
-                      ? 'bg-indigo-600/20 border-indigo-500 text-white font-bold' 
-                      : 'bg-[#121524] border-white/[0.06] hover:border-white/[0.15] text-slate-400 hover:text-slate-200'
+                      ? isDark
+                        ? 'bg-indigo-600/20 border-indigo-500 text-white font-bold'
+                        : 'bg-indigo-50 border-indigo-500 text-indigo-900 font-bold shadow-sm'
+                      : isDark
+                        ? 'bg-[#121524] border-white/[0.06] hover:border-white/[0.15] text-slate-400 hover:text-slate-200'
+                        : 'bg-white border-slate-200 hover:border-slate-300 text-slate-600 hover:text-slate-900 shadow-sm'
                   }`}
                 >
-                  <div className="text-[10px] font-mono text-slate-400">Pillar {p.number}</div>
+                  <div className={`text-[10px] font-mono ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+                    Pillar {p.number}
+                  </div>
                   <div className="text-xs truncate font-medium mt-0.5">{p.shortTitle}</div>
                   <div className={`text-[11px] font-mono font-bold mt-1 ${
-                    p.score >= 80 ? 'text-emerald-400' : p.score >= 65 ? 'text-blue-400' : p.score >= 50 ? 'text-amber-400' : 'text-rose-400'
+                    p.score >= 80 ? 'text-emerald-500' : p.score >= 65 ? 'text-blue-500' : p.score >= 50 ? 'text-amber-500' : 'text-rose-500'
                   }`}>
                     {p.score}/100
                   </div>
