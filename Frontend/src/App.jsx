@@ -44,8 +44,19 @@ function PlanLensApp() {
     setActivePlanId(sampleKey);
   };
 
-  const handleStartAudit = (fileName) => {
-    if (fileName && fileName !== activePlan.fileName) {
+  const handleStartAudit = (fileName, auditResult) => {
+    if (auditResult && auditResult.id) {
+      // Real analysis result returned from backend
+      setPlans(prev => ({
+        ...prev,
+        [auditResult.id]: auditResult
+      }));
+      setActivePlanId(auditResult.id);
+      if (auditResult.pillars && auditResult.pillars.length > 0) {
+        setSelectedPillarId(auditResult.pillars[0].id);
+      }
+    } else if (fileName && fileName !== activePlan.fileName) {
+      // Sample update fallback
       setPlans(prev => ({
         ...prev,
         [activePlanId]: {

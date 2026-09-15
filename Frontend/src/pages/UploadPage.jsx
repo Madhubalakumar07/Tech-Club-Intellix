@@ -7,10 +7,17 @@ import {
   X, 
   RefreshCw, 
   ArrowRight, 
-  Check
+  ShieldCheck, 
+  Cpu, 
+  Check, 
+  AlertCircle,
+  FileCode,
+  Zap,
+  AlertTriangle
 } from 'lucide-react';
 import Sidebar from '../components/Sidebar';
 import AppHeader from '../components/AppHeader';
+import { uploadAndAnalyzePlan } from '../services/api';
 import { useTheme } from '../context/ThemeContext';
 
 export default function UploadPage({ onNavigate, onStartAudit, activePlan, currentUser, onSignOut }) {
@@ -20,13 +27,15 @@ export default function UploadPage({ onNavigate, onStartAudit, activePlan, curre
     size: "2.4 MB",
     pages: 18,
     status: "Ready for analysis",
-    isSample: true
+    isSample: true,
+    rawFile: null
   });
 
   const [isDragging, setIsDragging] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analyzeProgress, setAnalyzeProgress] = useState(0);
   const [currentScanPillar, setCurrentScanPillar] = useState("Initializing Diagnostic Core...");
+  const [errorMessage, setErrorMessage] = useState(null);
   const fileInputRef = useRef(null);
 
   const pillarsList = [
@@ -51,6 +60,7 @@ export default function UploadPage({ onNavigate, onStartAudit, activePlan, curre
   const handleFileUpload = (e) => {
     const uploadedFile = e.target.files?.[0];
     if (uploadedFile) {
+      setErrorMessage(null);
       const sizeMB = (uploadedFile.size / (1024 * 1024)).toFixed(1);
       const estPages = Math.max(3, Math.round(uploadedFile.size / (150 * 1024)));
       setFile({
@@ -58,7 +68,8 @@ export default function UploadPage({ onNavigate, onStartAudit, activePlan, curre
         size: `${sizeMB} MB`,
         pages: estPages,
         status: "Ready for analysis",
-        isSample: false
+        isSample: false,
+        rawFile: uploadedFile
       });
     }
   };
@@ -68,6 +79,7 @@ export default function UploadPage({ onNavigate, onStartAudit, activePlan, curre
     setIsDragging(false);
     const droppedFile = e.dataTransfer.files?.[0];
     if (droppedFile) {
+      setErrorMessage(null);
       const sizeMB = (droppedFile.size / (1024 * 1024)).toFixed(1);
       const estPages = Math.max(3, Math.round(droppedFile.size / (150 * 1024)));
       setFile({
@@ -75,32 +87,67 @@ export default function UploadPage({ onNavigate, onStartAudit, activePlan, curre
         size: `${sizeMB} MB`,
         pages: estPages,
         status: "Ready for analysis",
-        isSample: false
+        isSample: false,
+        rawFile: droppedFile
       });
     }
   };
 
-  const handleStartAnalysis = () => {
+  const handleStartAnalysis = async () => {
     setIsAnalyzing(true);
+    setErrorMessage(null);
     setAnalyzeProgress(10);
     setCurrentScanPillar(scanStages[0]);
 
-    let step = 0;
-    const interval = setInterval(() => {
-      step++;
-      if (step < scanStages.length) {
-        setAnalyzeProgress((step / scanStages.length) * 90);
-        setCurrentScanPillar(scanStages[step]);
-      } else {
-        clearInterval(interval);
+    // If it's a real uploaded file and not a sample preset, send to backend API
+    if (file && !file.isSample && file.rawFile) {
+      try {
+        let step = 0;
+        const progressInterval = setInterval(() => {
+          step++;
+          if (step < scanStages.length - 1) {
+            setAnalyzeProgress(15 + Math.round((step / scanStages.length) * 65));
+            setCurrentScanPillar(scanStages[step]);
+          }
+        }, 500);
+
+        const auditResult = await uploadAndAnalyzePlan(file.rawFile, (prog, stage) => {
+          if (stage) setCurrentScanPillar(stage);
+        });
+
+        clearInterval(progressInterval);
         setAnalyzeProgress(100);
+        setCurrentScanPillar("Audit Complete! Loading dashboard...");
+
         setTimeout(() => {
           setIsAnalyzing(false);
-          onStartAudit(file.name);
+          onStartAudit(file.name, auditResult);
           onNavigate('dashboard');
-        }, 500);
+        }, 600);
+      } catch (err) {
+        console.error('Audit failed:', err);
+        setIsAnalyzing(false);
+        setErrorMessage(err.message || 'Failed to analyze plan. Make sure the backend is running on port 5000.');
       }
-    }, 450);
+    } else {
+      // Sample preset simulation flow
+      let step = 0;
+      const interval = setInterval(() => {
+        step++;
+        if (step < scanStages.length) {
+          setAnalyzeProgress((step / scanStages.length) * 90);
+          setCurrentScanPillar(scanStages[step]);
+        } else {
+          clearInterval(interval);
+          setAnalyzeProgress(100);
+          setTimeout(() => {
+            setIsAnalyzing(false);
+            onStartAudit(file.name);
+            onNavigate('dashboard');
+          }, 500);
+        }
+      }, 450);
+    }
   };
 
   return (
@@ -271,6 +318,23 @@ export default function UploadPage({ onNavigate, onStartAudit, activePlan, curre
                 </button>
               </div>
             </div>
+
+            {/* Error Message Display */}
+            {errorMessage && (
+              <div className="mt-4 p-4 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 flex items-start gap-3 text-xs">
+                <AlertTriangle className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
+                <div className="flex-1">
+                  <div className="font-semibold text-rose-200">Analysis Error</div>
+                  <div className="mt-0.5 text-rose-300/90">{errorMessage}</div>
+                </div>
+                <button 
+                  onClick={() => setErrorMessage(null)} 
+                  className="text-rose-400 hover:text-rose-200"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+            )}
 
             {/* Primary Action Button */}
             <div className="mt-8">
